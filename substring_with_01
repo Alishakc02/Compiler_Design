@@ -1,0 +1,78 @@
+
+  
+
+  #include <stdio.h>
+
+enum states { q0, q1, q2, qf };
+
+enum states delta(enum states, char);
+
+int main()
+{
+      printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 03\n");
+    enum states curr_state = q0;
+    char string[20];
+    int i = 0;
+
+    printf("\nEnter a string:\t");
+    fgets(string, sizeof(string), stdin);
+
+    /* remove newline */
+    for (i = 0; string[i] != '\0'; i++)
+    {
+        if (string[i] == '\n')
+        {
+            string[i] = '\0';
+            break;
+        }
+    }
+
+    i = 0;
+    while (string[i] != '\0')
+    {
+        curr_state = delta(curr_state, string[i]);
+        i++;
+    }
+
+    if (curr_state == qf)
+        printf("\nThe string %s is valid.", string);
+    else
+        printf("\nThe string %s is not valid.", string);
+
+    return 0;
+}
+
+/* Transition Function */
+enum states delta(enum states s, char ch)
+{
+    switch (s)
+    {
+        case q0:
+            if (ch == '0')
+                return q1;
+            else
+                return q0;
+
+        case q1:
+            if (ch == '0')
+                return q2;
+            else
+                return q0;
+
+        case q2:
+            if (ch == '1')
+                return qf;
+            else
+                return q2;
+
+        case qf:
+            return qf;
+
+        default:
+            return q0;
+    }
+}
+
+
