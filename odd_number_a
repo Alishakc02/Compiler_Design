@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 04\n");
+
+    char str[100], state = 'A';
+    int i;
+
+    printf("\nEnter the string of {a,b}: ");
+    scanf("%s", str);
+
+    for (i = 0; str[i] != '\0'; i++)
+    {
+        switch (state)
+        {
+            case 'A':
+                if (str[i] == 'a')
+                    state = 'B';
+                else if (str[i] == 'b')
+                    state = 'A';
+                break;
+
+            case 'B':
+                if (str[i] == 'a')
+                    state = 'A';
+                else if (str[i] == 'b')
+                    state = 'B';
+                break;
+        }
+    }
+
+    if (state == 'B')
+        printf("\n%s Accepted.\n", str);
+    else
+        printf("\n%s Rejected.\n", str);
+
+    return 0;
+}
