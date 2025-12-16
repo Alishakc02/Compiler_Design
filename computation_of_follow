@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX 10
+#define MAX_LEN 20
+
+// Global variables
+char productions[MAX][MAX_LEN];   // Store production rules
+char first[MAX][MAX_LEN];         // Store FIRST sets
+char follow[MAX][MAX_LEN];        // Store FOLLOW sets
+int numProductions;
+
+// Function prototypes
+void computeFirst(char symbol, char result[]);
+void addUnique(char set[], char val);
+void computeFollow(char symbol, char result[]);
+int isNonTerminal(char ch);
+int findProductionIndex(char ch);
+
+int main()
+{
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 05\n");
+
+    int i;
+    char symbol;
+    char choice;
+
+    printf("\nEnter number of productions: ");
+    scanf("%d", &numProductions);
+    getchar(); // consume newline
+
+    printf("Enter productions (e.g., E=TR):\n");
+    for(i = 0; i < numProductions; i++)
+        scanf("%s", productions[i]);
+
+    // Compute FIRST sets for all non-terminals
+    printf("\nFIRST Sets:\n");
+    for(i = 0; i < numProductions; i++)
+    {
+        symbol = productions[i][0];
+        first[i][0] = '\0';
+        computeFirst(symbol, first[i]);
+        printf("FIRST(%c) = { %s }\n", symbol, first[i]);
+    }
+
+    // Compute FOLLOW sets for all non-terminals
+    printf("\nFOLLOW Sets:\n");
+    for(i = 0; i < numProductions; i++)
+    {
+        symbol = productions[i][0];
+        follow[i][0] = '\0';
+        computeFollow(symbol, follow[i]);
+        printf("FOLLOW(%c) = { %s }\n", symbol, follow[i]);
+    }
+
+    return 0;
+}
+
+// Add unique element to set
+void addUnique(char set[], char val)
+{
+    int i;
+    for(i = 0; set[i] != '\0'; i++)
+        if(set[i] == val) return;
+    set[i] = val;
+    set[i+1] = '\0';
+}
+
+// Check if symbol is non-terminal
+int isNonTerminal(char ch)
+{
+    return isupper(ch);
+}
+
+// Find index of production with given non-terminal
+int findProductionIndex(char ch)
+{
+    for(int i = 0; i < numProductions; i++)
+        if(productions[i][0] == ch)
+            return i;
+    return -1;
+}
+
+// Compute FIRST of a symbol
+void computeFirst(char symbol, char result[])
+{
+    if(!isNonTerminal(symbol))
+    {
+        addUnique(result, symbol);
+        return;
+    }
+
+    for(int i = 0; i < numProductions; i++)
+    {
+        if(productions[i][0] == symbol)
+        {
+            char *rhs = productions[i]+2; // skip LHS and '='
+            if(rhs[0] == '#') // epsilon
+                addUnique(result, '#');
+            else
+            {
+                for(int j = 0; rhs[j] != '\0'; j++)
+                {
+                    char temp[20] = "";
+                    computeFirst(rhs[j], temp);
+                    for(int k = 0; temp[k] != '\0'; k++)
+                        addUnique(result, temp[k]);
+                    // Stop if no epsilon
+                    if(strchr(temp, '#') == NULL) break;
+                }
+            }
+        }
+    }
+}
+
+// Compute FOLLOW of a non-terminal
+void computeFollow(char symbol, char result[])
+{
+    // Start symbol gets $
+    if(productions[0][0] == symbol)
+        addUnique(result, '$');
+
+    for(int i = 0; i < numProductions; i++)
+    {
+        char *rhs = productions[i]+2;
+        for(int j = 0; rhs[j] != '\0'; j++)
+        {
+            if(rhs[j] == symbol)
+            {
+                if(rhs[j+1] != '\0') // Next symbol exists
+                {
+                    char temp[20] = "";
+                    computeFirst(rhs[j+1], temp);
+                    for(int k = 0; temp[k] != '\0'; k++)
+                    {
+                        if(temp[k] != '#')
+                            addUnique(result, temp[k]);
+                    }
+                    // If epsilon in FIRST, add FOLLOW of LHS
+                    if(strchr(temp, '#') != NULL)
+                    {
+                        char temp2[20] = "";
+                        computeFollow(productions[i][0], temp2);
+                        for(int k = 0; temp2[k] != '\0'; k++)
+                            addUnique(result, temp2[k]);
+                    }
+                }
+                else // Symbol at end, add FOLLOW of LHS
+                {
+                    char temp[20] = "";
+                    computeFollow(productions[i][0], temp);
+                    for(int k = 0; temp[k] != '\0'; k++)
+                        addUnique(result, temp[k]);
+                }
+            }
+        }
+    }
+}
