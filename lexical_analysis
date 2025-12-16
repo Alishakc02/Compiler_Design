@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+
+int main()
+{
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 09\n");
+
+    char str[5];
+    int valid = 0;
+
+    printf("\nEnter value to be identified: ");
+    scanf("%4s", str); // limit input to 4 chars
+
+    // Logical operators
+    if ((strcmp(str, "&&") == 0) || (strcmp(str, "||") == 0) || (strcmp(str, "!") == 0))
+    {
+        printf("\nIt is a Logical operator\n");
+        valid = 1;
+    }
+    // Relational operators
+    else if (strcmp(str, "<") == 0 || strcmp(str, ">") == 0 || strcmp(str, "<=") == 0 ||
+             strcmp(str, ">=") == 0 || strcmp(str, "==") == 0 || strcmp(str, "!=") == 0)
+    {
+        printf("\nIt is a Relational operator\n");
+        valid = 1;
+    }
+    // Bitwise operators
+    else if (strcmp(str, "&") == 0 || strcmp(str, "|") == 0 || strcmp(str, "~") == 0 ||
+             strcmp(str, "^") == 0 || strcmp(str, "<<") == 0 || strcmp(str, ">>") == 0)
+    {
+        printf("\nIt is a Bitwise operator\n");
+        valid = 1;
+    }
+    // Ternary operator
+    else if (strcmp(str, "?:") == 0)
+    {
+        printf("\nIt is a Ternary operator\n");
+        valid = 1;
+    }
+    // Arithmetic operators
+    else if (strcmp(str, "+") == 0 || strcmp(str, "-") == 0 || strcmp(str, "*") == 0 ||
+             strcmp(str, "/") == 0 || strcmp(str, "%") == 0)
+    {
+        printf("\nIt is an Arithmetic operator\n");
+        valid = 1;
+    }
+    // Assignment operators
+    else if (strcmp(str, "=") == 0 || strcmp(str, "+=") == 0 || strcmp(str, "-=") == 0 ||
+             strcmp(str, "*=") == 0 || strcmp(str, "/=") == 0 || strcmp(str, "%=") == 0)
+    {
+        printf("\nIt is an Assignment operator\n");
+        valid = 1;
+    }
+    // Unary operators
+    else if (strcmp(str, "++") == 0 || strcmp(str, "--") == 0)
+    {
+        printf("\nIt is a Unary operator\n");
+        valid = 1;
+    }
+
+    if (!valid)
+        printf("\nThe input is not a valid operator\n");
+
+    return 0;
+}
