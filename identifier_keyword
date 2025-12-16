@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <string.h>
+
+char keyword[32][10] = {
+    "auto","double","int","struct","break","else","long","switch",
+    "case","enum","register","typedef","char","extern","return","union",
+    "const","float","short","unsigned","continue","for","signed","void",
+    "default","goto","sizeof","volatile","do","if","static","while"
+};
+
+enum states { q0, qf, qd };
+
+enum states delta(enum states s, char ch);
+int iskeyword(char str[]);
+
+int main()
+{
+    enum states curr_state = q0;
+    char string[20];
+    int i = 0;
+
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 02\n");
+
+    printf("\nEnter a string: ");
+    fgets(string, sizeof(string), stdin);
+    string[strcspn(string, "\n")] = '\0';   // remove newline
+
+    if (iskeyword(string))
+    {
+        printf("\nThe string \"%s\" is a keyword.", string);
+    }
+    else
+    {
+        while (string[i] != '\0')
+        {
+            curr_state = delta(curr_state, string[i]);
+            i++;
+        }
+
+        if (curr_state == qf)
+            printf("\nThe string \"%s\" is a valid identifier.", string);
+        else
+            printf("\nThe string \"%s\" is neither keyword nor valid identifier.", string);
+    }
+
+    return 0;
+}
+
+/* Transition Function */
+enum states delta(enum states s, char ch)
+{
+    switch (s)
+    {
+        case q0:
+            if ((ch >= 'A' && ch <= 'Z') ||
+                (ch >= 'a' && ch <= 'z') ||
+                ch == '_')
+                return qf;
+            else
+                return qd;
+
+        case qf:
+            if ((ch >= 'A' && ch <= 'Z') ||
+                (ch >= 'a' && ch <= 'z') ||
+                (ch >= '0' && ch <= '9') ||
+                ch == '_')
+                return qf;
+            else
+                return qd;
+
+        case qd:
+        default:
+            return qd;
+    }
+}
+
+/* Keyword Checking Function */
+int iskeyword(char str[])
+{
+    int i;
+    for (i = 0; i < 32; i++)
+    {
+        if (strcmp(str, keyword[i]) == 0)
+            return 1;
+    }
+    return 0;
+}
