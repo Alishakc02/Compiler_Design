@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char stack[50], input[50];
+int st_ptr = 0, ip_ptr = 0;
+char action[20];
+
+void check();
+
+int main()
+{
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 11\n");
+
+    printf("\n\tShift-Reduce Parser\n");
+    printf("\nGrammar:\n E->E+E\n E->E*E\n E->E/E\n E->a\n E->b\n");
+
+    printf("\nEnter input string: ");
+    scanf("%s", input);
+
+    int len = strlen(input);
+    char temp[2];
+
+    printf("\nStack\t\tInput\t\tAction\n");
+    printf("-------------------------------------------\n");
+
+    while (ip_ptr < len)
+    {
+        // Shift
+        stack[st_ptr] = input[ip_ptr];
+        stack[st_ptr + 1] = '\0';
+
+        temp[0] = input[ip_ptr];
+        temp[1] = '\0';
+        strcpy(action, "Shift ");
+        strcat(action, temp);
+
+        printf("%-15s%-15s%-15s\n", stack, &input[ip_ptr + 1], action);
+
+        ip_ptr++;
+        st_ptr++;
+        check();
+    }
+
+    return 0;
+}
+
+void check()
+{
+    char temp[5];
+
+    // Reduce a -> E or b -> E
+    if (stack[st_ptr - 1] == 'a' || stack[st_ptr - 1] == 'b')
+    {
+        stack[st_ptr - 1] = 'E';
+        stack[st_ptr] = '\0';
+        printf("%-15s%-15s%-15s\n", stack, &input[ip_ptr], "E->a/b");
+        st_ptr = strlen(stack);
+    }
+
+    // Reduce E+E, E*E, E/E -> E
+    if (st_ptr >= 3)
+    {
+        strncpy(temp, &stack[st_ptr - 3], 3);
+        temp[3] = '\0';
+        if (strcmp(temp, "E+E") == 0 || strcmp(temp, "E*E") == 0 || strcmp(temp, "E/E") == 0)
+        {
+            stack[st_ptr - 3] = 'E';
+            stack[st_ptr - 2] = '\0';
+            st_ptr = strlen(stack);
+            printf("%-15s%-15s%-15s\n", stack, &input[ip_ptr], "E->E+E/E*E/E/E");
+        }
+    }
+
+    // Accept condition
+    if (st_ptr == 1 && stack[0] == 'E' && ip_ptr == strlen(input))
+    {
+        printf("%-15s%-15s%-15s\n", stack, "$", "Accept");
+        exit(0);
+    }
+}
