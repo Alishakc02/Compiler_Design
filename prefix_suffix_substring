@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+
+void find_prefix(char str[]);
+void find_suffix(char str[]);
+void find_substring(char str[], int x, int y);
+
+int main()
+{
+    char str[20];
+    int i, j;
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strcspn(str, "\n")] = '\0';   // remove newline
+
+    printf("\nPrefixes:");
+    find_prefix(str);
+
+    printf("\nSuffixes:");
+    find_suffix(str);
+
+    printf("\nEnter i and j for substring: ");
+    scanf("%d %d", &i, &j);
+
+    find_substring(str, i, j);
+
+    return 0;
+}
+
+void find_prefix(char str[])
+{
+    int i;
+    for (i = 1; i <= strlen(str); i++)
+    {
+        printf("\n%.*s", i, str);
+    }
+}
+
+void find_suffix(char str[])
+{
+    int i;
+    for (i = 0; i < strlen(str); i++)
+    {
+        printf("\n%s", &str[i]);
+    }
+}
+
+void find_substring(char str[], int x, int y)
+{
+    char substr[20];
+    int i, k = 0;
+
+    if (x < 1 || y > strlen(str) || x > y)
+    {
+        printf("\nInvalid position!");
+        return;
+    }
+
+    for (i = x - 1; i < y; i++)
+    {
+        substr[k++] = str[i];
+    }
+    substr[k] = '\0';
+
+    printf("\nSubstring: %s", substr);
+}
