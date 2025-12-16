@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <ctype.h>
+
+void FIRST(char result[], char ch);
+void addToResultSet(char result[], char val);
+
+int numOfProductions;
+char productionSet[10][10];
+
+int main()
+{
+    printf("Name: Alisha Khatri\n");
+    printf("Roll no: 03\n");
+    printf("Lab no: 06\n");
+
+    int i;
+    char choice, ch;
+    char result[20];
+
+    printf("How many number of productions?: ");
+    scanf("%d", &numOfProductions);
+
+    for(i = 0; i < numOfProductions; i++)
+    {
+        printf("Enter production number %d (e.g., E=E+T): ", i + 1);
+        scanf("%s", productionSet[i]);
+    }
+
+    do
+    {
+        printf("\nFind the FIRST of: ");
+        scanf(" %c", &ch);  // note the space before %c
+
+        result[0] = '\0';  // clear result array
+        FIRST(result, ch);
+
+        printf("FIRST(%c) = {", ch);
+        for(i = 0; result[i] != '\0'; i++)
+            printf("%c", result[i]);
+        printf("}\n");
+
+        printf("Press 'y' to continue: ");
+        scanf(" %c", &choice);
+
+    } while(choice == 'y' || choice == 'Y');
+
+    return 0;
+}
+
+// Compute FIRST of a symbol
+void FIRST(char result[], char ch)
+{
+    int i, j, k;
+    char subResult[20];
+    int foundEpsilon;
+
+    subResult[0] = '\0';
+
+    // Terminal symbol
+    if(!isupper(ch))
+    {
+        addToResultSet(result, ch);
+        return;
+    }
+
+    // Non-terminal symbol
+    for(i = 0; i < numOfProductions; i++)
+    {
+        if(productionSet[i][0] == ch)
+        {
+            // X -> $
+            if(productionSet[i][2] == '$')
+            {
+                addToResultSet(result, '$');
+            }
+            else
+            {
+                j = 2;
+                while(productionSet[i][j] != '\0')
+                {
+                    foundEpsilon = 0;
+                    subResult[0] = '\0';
+                    FIRST(subResult, productionSet[i][j]);
+
+                    for(k = 0; subResult[k] != '\0'; k++)
+                        addToResultSet(result, subResult[k]);
+
+                    foundEpsilon = 0;
+                    for(k = 0; subResult[k] != '\0'; k++)
+                    {
+                        if(subResult[k] == '$')
+                        {
+                            foundEpsilon = 1;
+                            break;
+                        }
+                    }
+
+                    if(!foundEpsilon)
+                        break;
+
+                    j++;
+                }
+            }
+        }
+    }
+}
+
+// Add element to result set (avoid duplicates)
+void addToResultSet(char result[], char val)
+{
+    int k;
+    for(k = 0; result[k] != '\0'; k++)
+    {
+        if(result[k] == val)
+            return;
+    }
+    result[k] = val;
+    result[k + 1] = '\0';
+}
